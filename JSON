@@ -1,0 +1,169 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "5985af2e-9ded-49b5-9b3f-39c5659cf437",
+      "name": "Daily 07:00 Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "sfrYXRH2jHsEuvdy"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "day_number",
+              "keyValue": "={{ $now.weekday }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "231d4d98-afd5-4eaf-81a5-8c164a29ab38",
+      "name": "Get Today Tasks",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        544,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "start_time"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bac3a93b-9c00-4481-ada4-716c7eaa20d6",
+      "name": "Sort By Start Time",
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        848,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f-day",
+              "name": "day",
+              "value": "={{ $json.day }}",
+              "type": "string"
+            },
+            {
+              "id": "f-time",
+              "name": "time",
+              "value": "={{ $json.start_time }} - {{ $json.end_time }}",
+              "type": "string"
+            },
+            {
+              "id": "f-task",
+              "name": "task",
+              "value": "={{ $json.task }}",
+              "type": "string"
+            },
+            {
+              "id": "f-line",
+              "name": "schedule_line",
+              "value": "={{ $json.start_time }} - {{ $json.end_time }}  |  {{ $json.task }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "edb70204-fb72-4367-bd96-271200552ee6",
+      "name": "Format Schedule Line",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1152,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Aaj ka Timetable\nData Table \"Timetable\" se aaj ke din ke tasks uthata hai, time ke hisaab se sort karta hai aur format karta hai. Rows add/edit karne ke liye Data Table kholo. Koi API key nahi chahiye.",
+        "height": 224,
+        "width": 768,
+        "color": 4
+      },
+      "id": "0a4e5f97-3f2f-4bfc-a293-bd6a4d26785c",
+      "name": "Sticky Note 95c892e1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        208
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 07:00 Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Today Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Today Tasks": {
+      "main": [
+        [
+          {
+            "node": "Sort By Start Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort By Start Time": {
+      "main": [
+        [
+          {
+            "node": "Format Schedule Line",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "be3a4c755d8623fd9fb350607a897bf4bd648dbf74ecdddb0f27d459800e6ecd"
+  }
+}
